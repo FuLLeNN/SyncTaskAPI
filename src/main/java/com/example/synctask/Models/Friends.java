@@ -1,21 +1,24 @@
 package com.example.synctask.Models;
 
 import com.example.synctask.DTOs.GetUserDto;
+import jakarta.persistence.*;
 
+@Entity
 public class Friends {
-    public int Id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long Id;
 
     public int UserId;
     public int FriendId;
-    public GetUserDto Friend;
 
     public boolean IsAccepted;
 
-    public int getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         Id = id;
     }
 
@@ -35,13 +38,6 @@ public class Friends {
         FriendId = friendId;
     }
 
-    public GetUserDto getFriend() {
-        return Friend;
-    }
-
-    public void setFriend(GetUserDto friend) {
-        Friend = friend;
-    }
 
     public boolean isAccepted() {
         return IsAccepted;
