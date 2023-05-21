@@ -1,5 +1,6 @@
 package com.example.synctask.Services;
 
+import com.example.synctask.DTOs.GroupByUserDto;
 import com.example.synctask.Models.Groups;
 
 import java.util.List;
@@ -10,6 +11,6 @@ public interface GroupService {
     Groups updateGroup(Groups group);
     void deleteGroupById(Long id);
     List<Groups> findAllByOwner(Long id);
-    List<Groups> findByMembersIdOrOwnerId(Long userId);
+    List<GroupByUserDto> findByMembersIdOrOwnerId(Long userId);
     Groups findById(Long id);
 }

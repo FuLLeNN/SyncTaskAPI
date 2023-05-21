@@ -2,6 +2,7 @@ package com.example.synctask.Controllers;
 
 import com.example.synctask.DTOs.CreateGroupDto;
 import com.example.synctask.DTOs.CreateTask;
+import com.example.synctask.DTOs.GroupByUserDto;
 import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
 import com.example.synctask.Models.Task;
@@ -122,7 +123,7 @@ public class GroupController {
 
     @Operation(summary = "Find all groups by user")
     @GetMapping("/user/{userId}")
-    public List<Groups> getAllByUser(@PathVariable("userId") Long userId){
+    public List<GroupByUserDto> getAllByUser(@PathVariable("userId") Long userId){
         return groupService.findByMembersIdOrOwnerId(userId);
     }
 

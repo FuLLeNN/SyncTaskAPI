@@ -1,9 +1,15 @@
 package com.example.synctask.Services;
 
+import com.example.synctask.DTOs.GetUserDto;
+import com.example.synctask.DTOs.GroupByUserDto;
+import com.example.synctask.DTOs.GroupMemberDto;
+import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
 import com.example.synctask.Repositories.GroupRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -41,8 +47,39 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public List<Groups> findByMembersIdOrOwnerId(Long userId){
-        return groupRepository.findByMemberIdOrOwnerId(userId);
+    public List<GroupByUserDto> findByMembersIdOrOwnerId(Long userId){
+        List<Groups> groups = groupRepository.findByMemberIdOrOwnerId(userId);
+        List<GroupByUserDto> groupByUserDtos = new ArrayList<>();
+
+        for (Groups group : groups) {
+            GroupByUserDto groupByUserDto = new GroupByUserDto();
+            groupByUserDto.setId(group.getId());
+            groupByUserDto.setOwner(group.getOwner());
+            groupByUserDto.setGroupName(group.getGroupName());
+            groupByUserDto.setTasks(group.getTasks());
+
+            List<GroupMemberDto> groupMemberDtos = new ArrayList<>();
+            for (GroupMember member : group.getMembers()) {
+                GroupMemberDto groupMemberDto = new GroupMemberDto();
+                groupMemberDto.setId(member.getId());
+                groupMemberDto.setAccepted(member.isAccepted());
+
+                GetUserDto userDto = new GetUserDto();
+                userDto.setId(member.getUser().getId());
+                userDto.setFullName(member.getUser().getFullname());
+                userDto.setUsername(member.getUser().getUsername());
+                userDto.setEmail(member.getUser().getEmail());
+
+                groupMemberDto.setUser(userDto);
+
+                groupMemberDtos.add(groupMemberDto);
+            }
+
+            groupByUserDto.setMembers(groupMemberDtos);
+            groupByUserDtos.add(groupByUserDto);
+        }
+
+        return groupByUserDtos;
     }
 
     @Override
