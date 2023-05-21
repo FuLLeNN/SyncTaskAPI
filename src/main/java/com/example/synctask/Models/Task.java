@@ -14,8 +14,8 @@ public class Task {
     private Long id;
     private String name;
     private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
     private boolean isGroup;
     private Long userId;
 
@@ -23,14 +23,14 @@ public class Task {
 
     }
 
-    public Task(String n, String d, LocalDate sd, LocalDate ed){
+    public Task(String n, String d, String sd, String ed){
         name = n;
         description = d;
         startDate = sd;
         endDate = ed;
     }
 
-    public Task(String n, String d, LocalDate sd, LocalDate ed, boolean ig, Long ui){
+    public Task(String n, String d, String sd, String ed, boolean ig, Long ui){
         name = n;
         description = d;
         startDate = sd;
@@ -63,20 +63,19 @@ public class Task {
         this.description = description;
     }
 
-
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
