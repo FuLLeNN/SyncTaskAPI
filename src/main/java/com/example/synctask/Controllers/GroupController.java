@@ -1,17 +1,19 @@
 package com.example.synctask.Controllers;
 
 import com.example.synctask.DTOs.CreateGroupDto;
+import com.example.synctask.DTOs.CreateTask;
 import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
+import com.example.synctask.Models.Task;
+import com.example.synctask.Models.UserT;
 import com.example.synctask.Services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 @Tag(description = "",name = "Groups Resource")
@@ -21,11 +23,13 @@ public class GroupController {
     private final GroupMemberServiceImpl groupMemberService;
     private final GroupServiceImpl groupService;
     private final UserServiceImpl userService;
+    private final TaskServiceImpl taskService;
 
-    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService) {
+    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService) {
         this.groupMemberService = groupMemberService;
         this.groupService = groupService;
         this.userService = userService;
+        this.taskService = taskService;
     }
 
     @Operation(summary  = "Get a Group by id", description = "Returns a Group by the given id")
@@ -127,4 +131,51 @@ public class GroupController {
         return groups;
     }
 
+    @Operation(summary = "Create task for group")
+    @PostMapping("/{groupId}/{userId}/task/")
+    public Task createTaskForGroup(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @RequestBody CreateTask task){
+        if(groupMemberService.existsByGroupIdAndUserId(groupId, userId)){
+            Task t = new Task();
+            t.setName(task.getName());
+            t.setDescription(task.getDescription());
+            t.setGroup(true);
+            t.setUserId(task.getUserId());
+            t.setStartDate(task.getStartDate());
+            t.setEndDate(task.getEndDate());
+            return taskService.saveTask(t);
+        }
+        return null;
+    }
+
+    @Operation(summary = "Remove user from group")
+    @PostMapping("/{groupId}/users/{userId}/remove")
+    public ResponseEntity<String> removeUserFromGroup(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId){
+        groupMemberService.removeGroupMemberByUserIdAndGroupId(userId,groupId);
+        return ResponseEntity.ok("User removed successful");
+    }
+
+    @Operation(summary =  "Admin remove task from group")
+    @PostMapping("/{groupId}/tasks/{taskId}/remove")
+    public ResponseEntity removeTaskFromGroupId(@PathVariable("groupId") Long groupId, @PathVariable("taskId") Long taskId){
+        Task task = taskService.findTaskById(taskId).get();
+        Groups group = groupService.findById(groupId);
+        for (Task t:group.getTasks()) {
+            if(t.getId() == task.getId()){
+                taskService.deleteTaskById(taskId);
+                return ResponseEntity.ok("Task removed");
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Operation(summary = "Owner of task remove task")
+    @PostMapping("/{groupId}/tasks/{userId}/{taskId}/remove")
+    public ResponseEntity removeTaskFromGroupByOwner(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @PathVariable("taskId") Long taskId){
+        Task task = taskService.findTaskById(taskId).get();
+        if(task.getUserId() == userId){
+            taskService.deleteTaskById(taskId);
+            return ResponseEntity.ok("Task deleted");
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

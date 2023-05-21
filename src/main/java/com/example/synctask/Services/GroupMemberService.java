@@ -14,4 +14,5 @@ public interface GroupMemberService {
     void denyGroupRequest(Long groupId, Long userId);
     List<GroupMember> getPendingGroupRequestByUser(Long userId);
     boolean existsByGroupIdAndUserId(Long groupId, Long userId);
+    GroupMember removeGroupMemberByUserIdAndGroupId(Long userId, Long groupId);
 }

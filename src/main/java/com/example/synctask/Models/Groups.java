@@ -55,4 +55,12 @@ public class Groups {
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
+
+    public List<GroupMember> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<GroupMember> members) {
+        this.members = members;
+    }
 }

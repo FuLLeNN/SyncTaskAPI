@@ -7,6 +7,7 @@ public class CreateTask {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long userId;
 
     public String getName() {
         return name;
@@ -38,5 +39,13 @@ public class CreateTask {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

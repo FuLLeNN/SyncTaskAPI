@@ -56,4 +56,9 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     public boolean existsByGroupIdAndUserId(Long groupId, Long userId) {
         return groupMemberRepository.existsByGroupIdAndUserId(groupId, userId);
     }
+
+    @Override
+    public GroupMember removeGroupMemberByUserIdAndGroupId(Long userId, Long groupId) {
+        return groupMemberRepository.removeGroupMemberByUserIdAndGroupId(userId, groupId);
+    }
 }
