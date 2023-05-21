@@ -1,5 +1,7 @@
 package com.example.synctask.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,9 +11,12 @@ public class GroupMember {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private UserT user;
 
     @ManyToOne
+    @JoinColumn(name = "group_id")
+    @JsonIgnoreProperties("members")
     private Groups group;
 
     private boolean accepted;

@@ -49,7 +49,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
     @Override
     public List<GroupMember> getPendingGroupRequestByUser(Long userId) {
-        return groupMemberRepository.findAllByUserId(userId);
+        return groupMemberRepository.findPendingInvitesByUserId(userId);
     }
 
     @Override

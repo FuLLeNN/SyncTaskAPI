@@ -10,6 +10,6 @@ public interface GroupService {
     Groups updateGroup(Groups group);
     void deleteGroupById(Long id);
     List<Groups> findAllByOwner(Long id);
-    List<Groups> findAllByMemberOrOwner(Long memberId, Long ownerId);
+    List<Groups> findByMembersIdOrOwnerId(Long userId);
     Groups findById(Long id);
 }

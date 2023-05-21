@@ -1,5 +1,8 @@
 package com.example.synctask.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -14,10 +17,11 @@ public class Groups {
 
     private String groupName;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany
     private List<Task> tasks;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group")
+    @JsonIgnoreProperties("group")
     private List<GroupMember> members;
 
     public Groups() {

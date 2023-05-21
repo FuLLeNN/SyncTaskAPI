@@ -17,6 +17,11 @@ public class UserT {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<Task> tasks;
 
+    public UserT(){
+
+    }
+
+
     public Long getId() {
         return id;
     }

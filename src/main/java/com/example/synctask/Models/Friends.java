@@ -14,6 +14,10 @@ public class Friends {
 
     public boolean IsAccepted;
 
+    public Friends(){
+
+    }
+
     public Long getId() {
         return Id;
     }

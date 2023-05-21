@@ -2,6 +2,7 @@ package com.example.synctask.Repositories;
 
 import com.example.synctask.Models.Groups;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,5 +11,7 @@ import java.util.List;
 public interface GroupRepository extends JpaRepository<Groups, Long> {
 
     List<Groups> findAllByOwner(Long id);
-    List<Groups> findAllByMembersOrOwner(Long memberId, Long ownerId);
+
+    @Query("SELECT DISTINCT g FROM Groups g INNER JOIN g.members gm WHERE g.owner = :userId OR gm.user.id = :userId")
+    List<Groups> findByMemberIdOrOwnerId(Long userId);
 }

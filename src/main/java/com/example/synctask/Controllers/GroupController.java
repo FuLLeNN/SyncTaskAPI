@@ -50,7 +50,13 @@ public class GroupController {
         Groups groups = new Groups();
         groups.setOwner(group.getOwner());
         groups.setGroupName(group.getGroupName());
-        return groupService.saveGroup(groups);
+        Groups g = groupService.saveGroup(groups);
+        GroupMember gp = new GroupMember();
+        gp.setGroup(g);
+        gp.setAccepted(true);
+        gp.setUser(userService.getUser(group.getOwner()));
+        groupMemberService.saveGroupMember(gp);
+        return g;
     }
 
     @Operation(summary = "Update Group by id", description = "Make changes on a Group by the id")
@@ -117,18 +123,13 @@ public class GroupController {
     @Operation(summary = "Find all groups by user")
     @GetMapping("/user/{userId}")
     public List<Groups> getAllByUser(@PathVariable("userId") Long userId){
-        return groupService.findAllByMemberOrOwner(userId, userId);
+        return groupService.findByMembersIdOrOwnerId(userId);
     }
 
     @Operation(summary = "Get all pending group invites by user")
     @GetMapping("/user/{userId}/invites")
-    public List<Groups> getAllPendingInvites(@PathVariable("userId") Long userId){
-        List<GroupMember> groupMembers = groupMemberService.getPendingGroupRequestByUser(userId);
-        List<Groups> groups = Arrays.asList();
-        for (GroupMember gp :groupMembers) {
-            groups.add(groupService.findById(gp.getGroup().getId()));
-        }
-        return groups;
+    public List<GroupMember> getAllPendingInvites(@PathVariable("userId") Long userId){
+        return groupMemberService.getPendingGroupRequestByUser(userId);
     }
 
     @Operation(summary = "Create task for group")

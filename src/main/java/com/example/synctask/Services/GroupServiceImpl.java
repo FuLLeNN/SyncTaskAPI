@@ -41,8 +41,8 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public List<Groups> findAllByMemberOrOwner(Long memberId, Long ownerId) {
-        return groupRepository.findAllByMembersOrOwner(memberId, ownerId);
+    public List<Groups> findByMembersIdOrOwnerId(Long userId){
+        return groupRepository.findByMemberIdOrOwnerId(userId);
     }
 
     @Override

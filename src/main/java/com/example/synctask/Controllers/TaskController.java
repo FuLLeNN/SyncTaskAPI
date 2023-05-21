@@ -41,6 +41,7 @@ public class TaskController {
         t.setDescription(task.getDescription());
         t.setStartDate(task.getStartDate());
         t.setEndDate(task.getEndDate());
+        t.setUserId(task.getUserId());
         return taskService.saveTask(t);
     }
 
