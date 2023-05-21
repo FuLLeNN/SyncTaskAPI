@@ -17,6 +17,7 @@ public interface TaskService {
     Task saveTask(Task task);
     Task updateTask(Task task);
     void deleteTaskById(Long id);
+    List<Task> findAllByUserId(Long id);
 
 }
 

@@ -86,4 +86,10 @@ public class TaskController {
     public void deleteTask(@PathVariable("id") Long id){
         taskService.deleteTaskById(id);
     }
+
+    @Operation(summary = "Get task by user id")
+    @GetMapping("/byUser/{userId}")
+    public List<Task> getTasksById(@PathVariable("userId") Long userId){
+        return taskService.findAllByUserId(userId);
+    }
 }
