@@ -35,19 +35,19 @@ public class GroupController {
 
     @Operation(summary  = "Get a Group by id", description = "Returns a Group by the given id")
     @GetMapping("/{id}")
-    public Groups getGroupById(@PathVariable("id") Long id){
-        return groupService.findById(id);
+    public GroupByUserDto getGroupById(@PathVariable("id") Long id){
+        return groupService.mapToGroupByUserDto(groupService.findById(id));
     }
 
     @Operation(summary  = "Get all Groups", description = "Returns all Groups")
     @GetMapping("/")
-    public List<Groups> getAllGroups(){
+    public List<GroupByUserDto> getAllGroups(){
         return groupService.findAll();
     }
 
     @Operation(summary = "Create Group")
     @PostMapping("/")
-    public Groups createGroup(@RequestBody CreateGroupDto group){
+    public GroupByUserDto createGroup(@RequestBody CreateGroupDto group){
         Groups groups = new Groups();
         groups.setOwner(group.getOwner());
         groups.setGroupName(group.getGroupName());
@@ -57,12 +57,12 @@ public class GroupController {
         gp.setAccepted(true);
         gp.setUser(userService.getUser(group.getOwner()));
         groupMemberService.saveGroupMember(gp);
-        return g;
+        return groupService.mapToGroupByUserDto(g);
     }
 
     @Operation(summary = "Update Group by id", description = "Make changes on a Group by the id")
     @PutMapping("/{id}")
-    public Groups updateGroup(@PathVariable("id") Long id, @RequestBody CreateGroupDto group ){
+    public GroupByUserDto updateGroup(@PathVariable("id") Long id, @RequestBody CreateGroupDto group ){
         Groups groups = groupService.findById(id);
         groups.setGroupName(group.getGroupName());
         groups.setOwner(group.getOwner());
@@ -117,7 +117,7 @@ public class GroupController {
 
     @Operation(summary = "Find groups by owner")
     @GetMapping("/owner/{ownerId}")
-    public List<Groups> getAllByOwner(@PathVariable("ownerId") Long ownerId){
+    public List<GroupByUserDto> getAllByOwner(@PathVariable("ownerId") Long ownerId){
         return groupService.findAllByOwner(ownerId);
     }
 

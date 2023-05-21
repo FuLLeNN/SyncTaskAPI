@@ -22,8 +22,8 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public List<Groups> findAll() {
-        return groupRepository.findAll();
+    public List<GroupByUserDto> findAll() {
+        return mapToGroupByUserDtoList(groupRepository.findAll());
     }
 
     @Override
@@ -32,8 +32,8 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public Groups updateGroup(Groups group) {
-        return groupRepository.save(group);
+    public GroupByUserDto updateGroup(Groups group) {
+        return mapToGroupByUserDto(groupRepository.save(group));
     }
 
     @Override
@@ -42,13 +42,21 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public List<Groups> findAllByOwner(Long id) {
-        return groupRepository.findAllByOwner(id);
+    public List<GroupByUserDto> findAllByOwner(Long id) {
+        return mapToGroupByUserDtoList(groupRepository.findAllByOwner(id));
     }
 
     @Override
     public List<GroupByUserDto> findByMembersIdOrOwnerId(Long userId){
-        List<Groups> groups = groupRepository.findByMemberIdOrOwnerId(userId);
+        return mapToGroupByUserDtoList(groupRepository.findByMemberIdOrOwnerId(userId));
+    }
+
+    @Override
+    public Groups findById(Long id) {
+        return groupRepository.findById(id).get();
+    }
+
+    public List<GroupByUserDto> mapToGroupByUserDtoList(List<Groups> groups) {
         List<GroupByUserDto> groupByUserDtos = new ArrayList<>();
 
         for (Groups group : groups) {
@@ -82,8 +90,32 @@ public class GroupServiceImpl implements GroupService{
         return groupByUserDtos;
     }
 
-    @Override
-    public Groups findById(Long id) {
-        return groupRepository.findById(id).get();
+    public GroupByUserDto mapToGroupByUserDto(Groups group) {
+        GroupByUserDto groupByUserDto = new GroupByUserDto();
+        groupByUserDto.setId(group.getId());
+        groupByUserDto.setOwner(group.getOwner());
+        groupByUserDto.setGroupName(group.getGroupName());
+        groupByUserDto.setTasks(group.getTasks());
+
+        List<GroupMemberDto> groupMemberDtos = new ArrayList<>();
+        for (GroupMember member : group.getMembers()) {
+            GroupMemberDto groupMemberDto = new GroupMemberDto();
+            groupMemberDto.setId(member.getId());
+            groupMemberDto.setAccepted(member.isAccepted());
+
+            GetUserDto userDto = new GetUserDto();
+            userDto.setId(member.getUser().getId());
+            userDto.setFullName(member.getUser().getFullname());
+            userDto.setUsername(member.getUser().getUsername());
+            userDto.setEmail(member.getUser().getEmail());
+
+            groupMemberDto.setUser(userDto);
+
+            groupMemberDtos.add(groupMemberDto);
+        }
+
+        groupByUserDto.setMembers(groupMemberDtos);
+
+        return groupByUserDto;
     }
 }
