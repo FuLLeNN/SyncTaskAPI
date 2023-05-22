@@ -37,12 +37,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findTasksByStartDate(LocalDate date) {
+    public List<Task> findTasksByStartDate(String date) {
         return taskRepository.findByStartDate(date);
     }
 
     @Override
-    public List<Task> findTasksByEndDate(LocalDate date) {
+    public List<Task> findTasksByEndDate(String date) {
         return taskRepository.findByEndDate(date);
     }
 

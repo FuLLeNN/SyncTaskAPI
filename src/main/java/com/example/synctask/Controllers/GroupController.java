@@ -144,6 +144,9 @@ public class GroupController {
             t.setUserId(task.getUserId());
             t.setStartDate(task.getStartDate());
             t.setEndDate(task.getEndDate());
+            Groups group = groupService.findById(groupId);
+            group.getTasks().add(t);
+            userService.getUser(userId).getTasks().add(t);
             return taskService.saveTask(t);
         }
         return null;

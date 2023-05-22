@@ -3,11 +3,11 @@ package com.example.synctask.Controllers;
 import com.example.synctask.DTOs.CreateTask;
 import com.example.synctask.Models.Task;
 import com.example.synctask.Services.TaskServiceImpl;
+import com.example.synctask.Services.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,9 +16,11 @@ import java.util.Optional;
 @RequestMapping("api/tasks")
 public class TaskController {
     private final TaskServiceImpl taskService;
+    private final UserServiceImpl userService;
 
-    public TaskController(TaskServiceImpl taskService) {
+    public TaskController(TaskServiceImpl taskService, UserServiceImpl userService) {
         this.taskService = taskService;
+        this.userService = userService;
     }
 
     @Operation(summary  = "Get an task by id", description = "Returns a task by the id given")
@@ -42,30 +44,31 @@ public class TaskController {
         t.setStartDate(task.getStartDate());
         t.setEndDate(task.getEndDate());
         t.setUserId(task.getUserId());
+        userService.getUser(t.getUserId()).getTasks().add(t);
         return taskService.saveTask(t);
     }
 
     @Operation(summary  = "Get all tasks by name", description = "Returns all tasks by the name $$$$")
-    @GetMapping("/{name}")
+    @GetMapping("/byName/{name}")
     public List<Task> getTasksByName(@PathVariable("name") String name){
         return taskService.findTasksByName(name);
     }
 
     @Operation(summary  = "Get all tasks by description", description = "Returns all tasks by the description $$$$")
-    @GetMapping("/{description}")
+    @GetMapping("/byDescription/{description}")
     public List<Task> getTasksByDescription(@PathVariable("description") String description){
         return taskService.findTasksByDescription(description);
     }
 
     @Operation(summary  = "Get all tasks by StartDate", description = "Returns all tasks by the StartDate $$$$")
-    @GetMapping("/{startDate}")
-    public List<Task> getTasksByStartDate(@PathVariable("startDate") LocalDate date){
+    @GetMapping("/byStartDate/{startDate}")
+    public List<Task> getTasksByStartDate(@PathVariable("startDate") String date){
         return taskService.findTasksByStartDate(date);
     }
 
     @Operation(summary  = "Get all tasks by EndDate", description = "Returns all tasks by the EndDate $$$$")
-    @GetMapping("/{endDate}")
-    public List<Task> getTasksByEndDate(@PathVariable("endDate") LocalDate date){
+    @GetMapping("/byEndDate/{endDate}")
+    public List<Task> getTasksByEndDate(@PathVariable("endDate") String date){
         return taskService.findTasksByEndDate(date);
     }
 

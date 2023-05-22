@@ -12,8 +12,8 @@ public interface TaskService {
     Optional<Task> findTaskById(Long id);
     List<Task> findTasksByName(String name);
     List<Task> findTasksByDescription(String description);
-    List<Task> findTasksByStartDate(LocalDate date);
-    List<Task> findTasksByEndDate(LocalDate date);
+    List<Task> findTasksByStartDate(String date);
+    List<Task> findTasksByEndDate(String date);
     Task saveTask(Task task);
     Task updateTask(Task task);
     void deleteTaskById(Long id);
