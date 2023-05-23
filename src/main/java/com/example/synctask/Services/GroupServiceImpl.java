@@ -56,6 +56,11 @@ public class GroupServiceImpl implements GroupService{
         return groupRepository.findById(id).get();
     }
 
+    @Override
+    public Groups findByTaskId(Long id) {
+        return groupRepository.findByTasksId(id);
+    }
+
     public List<GroupByUserDto> mapToGroupByUserDtoList(List<Groups> groups) {
         List<GroupByUserDto> groupByUserDtos = new ArrayList<>();
 

@@ -17,7 +17,7 @@ public class Groups {
 
     private String groupName;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "group")

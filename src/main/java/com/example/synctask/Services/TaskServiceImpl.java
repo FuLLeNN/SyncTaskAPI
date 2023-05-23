@@ -1,19 +1,24 @@
 package com.example.synctask.Services;
 
 import com.example.synctask.Models.Task;
+import com.example.synctask.Repositories.GroupRepository;
 import com.example.synctask.Repositories.TaskRepository;
+import com.example.synctask.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 @Service
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, GroupRepository groupRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -58,6 +63,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTaskById(Long id) {
+        Task task = taskRepository.findById(id).get();
+        userRepository.findById(task.getUserId()).get().getTasks().remove(task);
+        if(task.isGroup())
+            groupRepository.findByTasksId(id).getTasks().remove(task);
         taskRepository.deleteById(id);
     }
 

@@ -14,4 +14,6 @@ public interface GroupRepository extends JpaRepository<Groups, Long> {
 
     @Query("SELECT DISTINCT g FROM Groups g INNER JOIN g.members gm WHERE g.owner = :userId OR gm.user.id = :userId")
     List<Groups> findByMemberIdOrOwnerId(Long userId);
+
+    Groups findByTasksId(Long taskId);
 }

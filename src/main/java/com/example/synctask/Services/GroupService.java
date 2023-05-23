@@ -13,4 +13,5 @@ public interface GroupService {
     List<GroupByUserDto> findAllByOwner(Long id);
     List<GroupByUserDto> findByMembersIdOrOwnerId(Long userId);
     Groups findById(Long id);
+    Groups findByTaskId(Long id);
 }
