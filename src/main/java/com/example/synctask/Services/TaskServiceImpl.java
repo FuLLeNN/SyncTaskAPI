@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -73,6 +76,12 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findAllByUserId(Long id) {
         return taskRepository.findAllByUserId(id);
+    }
+
+    public List<Task> getTasksByGroup(Long groupId) {
+        // Retrieve tasks by group using the taskRepository
+        List<Task> tasks = taskRepository.findByGroupId(groupId);
+        return tasks;
     }
 
 

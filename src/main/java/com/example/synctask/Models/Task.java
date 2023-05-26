@@ -19,6 +19,8 @@ public class Task {
     private boolean isGroup;
     private Long userId;
 
+    private Long groupId;
+
     public Task(){
 
     }
@@ -93,5 +95,13 @@ public class Task {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }
