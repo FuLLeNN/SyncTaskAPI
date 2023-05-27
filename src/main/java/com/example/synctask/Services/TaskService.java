@@ -17,6 +17,6 @@ public interface TaskService {
     void deleteTaskById(Long id);
     List<Task> findAllByUserId(Long id);
 
-    List<Task> getTasksByGroup(Long id);
+    List<Task> getTasksByGroup(Long groupId);
 }
 
