@@ -2,16 +2,16 @@ package com.example.synctask.DTOs;
 
 public class GetUserDto {
 
-    public int id;
+    public Long id;
     public String fullName;
     public String username ;
     public String email ;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
