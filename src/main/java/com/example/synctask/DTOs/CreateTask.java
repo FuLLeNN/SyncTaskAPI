@@ -8,6 +8,7 @@ public class CreateTask {
     private String startDate;
     private String endDate;
     private Long userId;
+    private Long groupId;
 
     public String getName() {
         return name;
@@ -47,5 +48,13 @@ public class CreateTask {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }

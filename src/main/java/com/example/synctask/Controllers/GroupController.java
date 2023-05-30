@@ -7,6 +7,8 @@ import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
 import com.example.synctask.Models.Task;
 import com.example.synctask.Services.*;
+import com.example.synctask.core.WebSocketHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
@@ -24,14 +26,15 @@ public class GroupController {
     private final GroupServiceImpl groupService;
     private final UserServiceImpl userService;
     private final TaskServiceImpl taskService;
+    private final WebSocketHandler webSocketHandler;
 
 
-    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService) {
+    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService, WebSocketHandler webSocketHandler) {
         this.groupMemberService = groupMemberService;
         this.groupService = groupService;
         this.userService = userService;
         this.taskService = taskService;
-
+        this.webSocketHandler = webSocketHandler;
     }
 
     @Operation(summary  = "Get a Group by id", description = "Returns a Group by the given id")
@@ -156,7 +159,7 @@ public class GroupController {
 
     @Operation(summary = "Create task for group")
     @PostMapping("/{groupId}/{userId}/task/")
-    public Task createTaskForGroup(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @RequestBody CreateTask task){
+    public Task createTaskForGroup(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @RequestBody CreateTask task) throws JsonProcessingException {
         if(groupMemberService.existsByGroupIdAndUserId(groupId, userId)){
             Task t = new Task();
             t.setName(task.getName());
@@ -165,10 +168,13 @@ public class GroupController {
             t.setUserId(task.getUserId());
             t.setStartDate(task.getStartDate());
             t.setEndDate(task.getEndDate());
+            t.setGroupId(task.getGroupId());
             Groups group = groupService.findById(groupId);
             group.getTasks().add(t);
             userService.getUser(userId).getTasks().add(t);
-            return taskService.saveTask(t);
+            Task newT = taskService.saveTask(t);
+            webSocketHandler.sendTaskUpdateToSessions(task.getGroupId());
+            return newT;
         }
         return null;
     }
@@ -182,12 +188,13 @@ public class GroupController {
 
     @Operation(summary =  "Admin remove task from group")
     @PostMapping("/{groupId}/tasks/{taskId}/remove")
-    public ResponseEntity removeTaskFromGroupId(@PathVariable("groupId") Long groupId, @PathVariable("taskId") Long taskId){
+    public ResponseEntity removeTaskFromGroupId(@PathVariable("groupId") Long groupId, @PathVariable("taskId") Long taskId) throws JsonProcessingException {
         Task task = taskService.findTaskById(taskId).get();
         Groups group = groupService.findById(groupId);
         for (Task t:group.getTasks()) {
             if(t.getId() == task.getId()){
                 taskService.deleteTaskById(taskId);
+                webSocketHandler.sendTaskUpdateToSessions(group.getId());
                 return ResponseEntity.ok("Task removed");
             }
         }
@@ -196,13 +203,13 @@ public class GroupController {
 
     @Operation(summary = "Owner of task remove task")
     @PostMapping("/{groupId}/tasks/{userId}/{taskId}/remove")
-    public ResponseEntity removeTaskFromGroupByOwner(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @PathVariable("taskId") Long taskId){
+    public ResponseEntity removeTaskFromGroupByOwner(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId, @PathVariable("taskId") Long taskId) throws JsonProcessingException {
         Task task = taskService.findTaskById(taskId).get();
         if(task.getUserId() == userId){
             taskService.deleteTaskById(taskId);
+            webSocketHandler.sendTaskUpdateToSessions(groupId);
             return ResponseEntity.ok("Task deleted");
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 }

@@ -5,7 +5,10 @@ import com.example.synctask.DTOs.GroupByUserDto;
 import com.example.synctask.DTOs.GroupMemberDto;
 import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
+import com.example.synctask.Models.Task;
 import com.example.synctask.Repositories.GroupRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -14,16 +17,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class GroupServiceImpl implements GroupService{
 
     private final GroupRepository groupRepository;
+    private ObjectMapper objectMapper;
 
-    public GroupServiceImpl(GroupRepository groupRepository) {
+    public GroupServiceImpl(GroupRepository groupRepository, ObjectMapper objectMapper) {
         this.groupRepository = groupRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -152,5 +156,9 @@ public class GroupServiceImpl implements GroupService{
         groupByUserDto.setMembers(groupMemberDtos);
 
         return groupByUserDto;
+    }
+
+    public String convertTasksListToJson(List<Task> tasks) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(tasks);
     }
 }

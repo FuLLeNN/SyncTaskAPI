@@ -4,12 +4,11 @@ import com.example.synctask.Models.Task;
 import com.example.synctask.Repositories.GroupRepository;
 import com.example.synctask.Repositories.TaskRepository;
 import com.example.synctask.Repositories.UserRepository;
+import com.example.synctask.core.WebSocketHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -17,11 +16,13 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final WebSocketHandler webSocketHandler;
 
-    public TaskServiceImpl(TaskRepository taskRepository, GroupRepository groupRepository, UserRepository userRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, GroupRepository groupRepository, UserRepository userRepository, WebSocketHandler webSocketHandler) {
         this.taskRepository = taskRepository;
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.webSocketHandler = webSocketHandler;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task saveTask(Task task) {
+    public Task saveTask(Task task){
         return taskRepository.save(task);
     }
 

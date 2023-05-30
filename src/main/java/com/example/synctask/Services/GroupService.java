@@ -2,6 +2,8 @@ package com.example.synctask.Services;
 
 import com.example.synctask.DTOs.GroupByUserDto;
 import com.example.synctask.Models.Groups;
+import com.example.synctask.Models.Task;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
@@ -15,4 +17,5 @@ public interface GroupService {
     Groups findById(Long id);
     Groups findByTaskId(Long id);
     Long getIdByJWT(String jwt);
+    String convertTasksListToJson(List<Task> tasks) throws JsonProcessingException;
 }
