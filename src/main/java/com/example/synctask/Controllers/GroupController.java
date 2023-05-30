@@ -6,15 +6,14 @@ import com.example.synctask.DTOs.GroupByUserDto;
 import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
 import com.example.synctask.Models.Task;
-import com.example.synctask.Models.UserT;
 import com.example.synctask.Services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Tag(description = "",name = "Groups Resource")
@@ -26,11 +25,13 @@ public class GroupController {
     private final UserServiceImpl userService;
     private final TaskServiceImpl taskService;
 
+
     public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService) {
         this.groupMemberService = groupMemberService;
         this.groupService = groupService;
         this.userService = userService;
         this.taskService = taskService;
+
     }
 
     @Operation(summary  = "Get a Group by id", description = "Returns a Group by the given id")
@@ -47,17 +48,27 @@ public class GroupController {
 
     @Operation(summary = "Create Group")
     @PostMapping("/")
-    public GroupByUserDto createGroup(@RequestBody CreateGroupDto group){
-        Groups groups = new Groups();
-        groups.setOwner(group.getOwner());
-        groups.setGroupName(group.getGroupName());
-        Groups g = groupService.saveGroup(groups);
-        GroupMember gp = new GroupMember();
-        gp.setGroup(g);
-        gp.setAccepted(true);
-        gp.setUser(userService.getUser(group.getOwner()));
-        groupMemberService.saveGroupMember(gp);
-        return groupService.mapToGroupByUserDto(g);
+    public GroupByUserDto createGroup(@RequestBody CreateGroupDto group, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        try {
+            long userId = groupService.getIdByJWT(token);
+            if (userId != group.getOwner()) {
+                System.out.println("Token doesn't match user ID!");
+                return null;
+            }
+            Groups groups = new Groups();
+            groups.setOwner(group.getOwner());
+            groups.setGroupName(group.getGroupName());
+            Groups g = groupService.saveGroup(groups);
+            GroupMember gp = new GroupMember();
+            gp.setGroup(g);
+            gp.setAccepted(true);
+            gp.setUser(userService.getUser(group.getOwner()));
+            groupMemberService.saveGroupMember(gp);
+            return groupService.mapToGroupByUserDto(g);
+        } catch (Exception e) {
+            System.out.println("An error occurred during token verification: " + e.getMessage());
+            return null;
+        }
     }
 
     @Operation(summary = "Update Group by id", description = "Make changes on a Group by the id")
@@ -123,8 +134,18 @@ public class GroupController {
 
     @Operation(summary = "Find all groups by user")
     @GetMapping("/user/{userId}")
-    public List<GroupByUserDto> getAllByUser(@PathVariable("userId") Long userId){
-        return groupService.findByMembersIdOrOwnerId(userId);
+    public List<GroupByUserDto> getAllByUser(@PathVariable("userId") Long userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        try {
+            long id = groupService.getIdByJWT(token);
+            if (id != userId) {
+                System.out.println("Token doesn't match user ID!");
+                return null;
+            }
+            return groupService.findByMembersIdOrOwnerId(userId);
+        } catch (Exception e) {
+            System.out.println("An error occurred during token verification: " + e.getMessage());
+            return null;
+        }
     }
 
     @Operation(summary = "Get all pending group invites by user")
