@@ -19,6 +19,7 @@ public class GroupMember {
     @JsonIgnoreProperties("members")
     private Groups group;
 
+
     private boolean accepted;
 
     public GroupMember() {
