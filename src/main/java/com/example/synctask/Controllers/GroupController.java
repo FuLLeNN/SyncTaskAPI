@@ -26,14 +26,16 @@ public class GroupController {
     private final GroupServiceImpl groupService;
     private final UserServiceImpl userService;
     private final TaskServiceImpl taskService;
+    private final JwtSeviceImpl jwtSevice;
     private final WebSocketHandler webSocketHandler;
 
 
-    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService, WebSocketHandler webSocketHandler) {
+    public GroupController(GroupMemberServiceImpl groupMemberService, GroupServiceImpl groupService, UserServiceImpl userService, TaskServiceImpl taskService, JwtSeviceImpl jwtSevice, WebSocketHandler webSocketHandler) {
         this.groupMemberService = groupMemberService;
         this.groupService = groupService;
         this.userService = userService;
         this.taskService = taskService;
+        this.jwtSevice = jwtSevice;
         this.webSocketHandler = webSocketHandler;
     }
 
@@ -53,7 +55,7 @@ public class GroupController {
     @PostMapping("/")
     public GroupByUserDto createGroup(@RequestBody CreateGroupDto group, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
         try {
-            long userId = groupService.getIdByJWT(token);
+            long userId = jwtSevice.getIdByJWT(token);
             if (userId != group.getOwner()) {
                 System.out.println("Token doesn't match user ID!");
                 return null;
@@ -139,7 +141,7 @@ public class GroupController {
     @GetMapping("/user/{userId}")
     public List<GroupByUserDto> getAllByUser(@PathVariable("userId") Long userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
         try {
-            long id = groupService.getIdByJWT(token);
+            long id = jwtSevice.getIdByJWT(token);
             if (id != userId) {
                 System.out.println("Token doesn't match user ID!");
                 return null;

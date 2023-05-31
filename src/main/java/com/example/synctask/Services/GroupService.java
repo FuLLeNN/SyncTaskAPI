@@ -16,6 +16,5 @@ public interface GroupService {
     List<GroupByUserDto> findByMembersIdOrOwnerId(Long userId);
     Groups findById(Long id);
     Groups findByTaskId(Long id);
-    Long getIdByJWT(String jwt);
     String convertTasksListToJson(List<Task> tasks) throws JsonProcessingException;
 }
