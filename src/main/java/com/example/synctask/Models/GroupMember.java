@@ -14,7 +14,7 @@ public class GroupMember {
     @JoinColumn(name = "user_id")
     private UserT user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     @JsonIgnoreProperties("members")
     private Groups group;

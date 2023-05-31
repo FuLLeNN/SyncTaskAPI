@@ -6,9 +6,14 @@ import com.example.synctask.DTOs.GroupMemberDto;
 import com.example.synctask.Models.GroupMember;
 import com.example.synctask.Models.Groups;
 import com.example.synctask.Models.Task;
+import com.example.synctask.Models.UserT;
+import com.example.synctask.Repositories.GroupMemberRepository;
 import com.example.synctask.Repositories.GroupRepository;
+import com.example.synctask.Repositories.TaskRepository;
+import com.example.synctask.Repositories.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -23,10 +28,16 @@ import java.util.List;
 public class GroupServiceImpl implements GroupService{
 
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final TaskRepository taskRepository;
     private ObjectMapper objectMapper;
 
-    public GroupServiceImpl(GroupRepository groupRepository, ObjectMapper objectMapper) {
+    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupMemberRepository groupMemberRepository, TaskRepository taskRepository, ObjectMapper objectMapper) {
         this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
+        this.groupMemberRepository = groupMemberRepository;
+        this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -46,6 +57,7 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
+    @Transactional
     public void deleteGroupById(Long id) {
         groupRepository.deleteById(id);
     }

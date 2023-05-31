@@ -20,7 +20,7 @@ public class Groups {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("group")
     private List<GroupMember> members;
 
